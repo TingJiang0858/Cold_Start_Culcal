@@ -1,59 +1,82 @@
+#!/usr/bin/python
 import csv
 
-class Func_invo:
-    def __init__(self,owner, app, func, tri, inv):
-        self.owner = owner
-        self.app = app
-        self.func = func
-        self.tri = tri
-        self.inv = inv
+dict = {}  # all of the owner
+owner = {}  # app
+app = {}  # function
+func = {}  # tri
 
-    def cold_culcal(self,cold_start):
-        self.cold_start = cold_start
-        
-  #  def p(self):
-  #      print(self.inv)
+def readfile(rows):
 
-rows = []
-filename = 'test1.csv'
-with open(filename) as f:
-    reader = csv.reader(f)
-    title = next(reader)        # get first line
-    for r in reader:
-        rows.append(r)
+    #print(rows)
 
-#print(rows)
-r = []
-obj = []
-i = 0
-for row in rows:
-    r = row
-#    print(r)
-    del r[0:4]
-    temp = Func_invo(row[0],row[1],row[2],row[3],r)
-    #print(r)
-    obj.append(temp)
-    #print(obj)
+    if dict.__contains__(rows[0]):
+        if owner.__contains__(rows[1]):
+            if app.__contains__(rows[2]):
+                if func.__contains__(rows[3]):
+                    i = 1  # !!!!!!!!!!!!!!!!!!!!!
 
-idle_time = 10
-start = []
-for i in range(len(rows)):
-    print(obj[i].inv)
+                else:
+                    func[rows[3]] = rows[4:]
+            else:
+                app[rows[2]] = func
+                func[rows[3]] = rows[4:]
+        else:
+            owner[rows[1]] = app
+            app[rows[2]] = func
+            func[rows[3]] = rows[4:]
+    else:
+        dict[rows[0]] = owner
+        owner[rows[1]] = app
+        app[rows[2]] = func
+        func[rows[3]] = [rows[4:],[]]
+
+    print("dict = ", dict)
+
+
+def cold_start_counting(rows, invo):
+    int_invo = [int(x) for x in invo]
+    #print(int_invo)
+    idle_time = 10
+    cold_start = []
     cold = 0
     count = 0
-    for invaction in obj[i].inv:
-        #print(invaction)
-        if int(invaction) == 0:
+    container = 0
+    clock = 0
+    for invaction in int_invo:
+        print("invaction = ", invaction)
+        clock += 1
+        if count > idle_time:
+            container = 0
+
+        if invaction == 0:
             count +=1
-        if int(invaction) == 1 and count <= idle_time:
-            count = 0
-        if int(invaction) == 1 and count > idle_time:
-            cold +=1
-            count = 0
-    start.append(cold)
-print(start)
+        elif invaction > 0:
+            if count <= idle_time and container < invaction:
+                cold += (invaction - container)
+                count = 0
+                container = invaction
+            if count > idle_time:
+                cold += invaction
+                count = 0
+                container = invaction
+        print("cold, count, container", cold,count, container,clock)    # transit clock!!!!!!!!!!!!
+    cold_start.append(cold)
+    func[rows[3]][1] = cold_start
+    print(dict)
 
 
+def main():
+    rows = []
+    filename = 'test1.csv'
+    with open(filename) as f:
+        reader = csv.reader(f)
+        title = next(reader)  # get first line
+        #for r in reader:
+        rows = next(reader)
+        readfile(rows)                                         #!!!!!!!
+        cold_start_counting(rows, rows[4:])
 
-
-
+if __name__ == '__main__':
+    main()
+    # print(__name__)
