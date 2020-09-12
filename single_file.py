@@ -33,13 +33,13 @@ def readfile(rows):
 
 def cold_start_counting(rows, invo):
     int_invo = [int(x) for x in invo]
-    #print(int_invo)
+    print(int_invo)
     idle_time = 10
     cold_start = []
     cold = 0
-    count = 0
+    count = 1
     container = 0
-    clock = 0
+    clock = 1
     for invaction in int_invo:
         #print("invaction = ", invaction)
         clock += 1
@@ -48,7 +48,7 @@ def cold_start_counting(rows, invo):
         if invaction == 0:
             count += 1
         elif invaction > 0:
-            count = 0
+            count = 1
             if count <= idle_time and container < invaction:
                 cold += (invaction - container)
                 container = invaction
@@ -57,7 +57,7 @@ def cold_start_counting(rows, invo):
                 container = invaction
         #print("cold, count, container", cold,count, container)    # transit clock!!!!!!!!!!!!
     cold_start.append(cold)
-    #print("cold_start = ", cold_start)
+    print("cold_start = ", cold_start)
     dict[rows[0]][rows[1]][rows[2]][rows[3]].append(cold_start)
     # print(dict)
 
