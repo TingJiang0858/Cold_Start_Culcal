@@ -4,6 +4,8 @@ import sys, getopt
 import os
 import time
 from pprint import pprint
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 # global variables
@@ -75,7 +77,7 @@ def main(argv):
     for day in range(1, 15):
 
         # time.sleep(1)
-        fname = "./az_data/invocations_per_function_md.anon.d" + \
+        fname = "./data/invocations_per_function_md.anon.d" + \
             ("%02d" % day) + ".csv"
 
         print ("Day:", day, fname)
@@ -85,6 +87,8 @@ def main(argv):
             readCSV = csv.reader(csvfile, delimiter=',')
             for row in readCSV:
                 if row[0] == "HashOwner":
+                    continue
+                if row[2] != "dd833bb70b3a57caaa6b4e4560975d9ba5a77fd0151e13d1b5f30b4f6c381d5c":
                     continue
 
                 invo_time = (day - 1) * 1440 + 1
